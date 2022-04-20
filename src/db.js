@@ -1,4 +1,5 @@
 var MongoClient = require('mongodb').MongoClient;
+require('dotenv').config(); // import the env file
 
 var dbConnection = function () {
 
@@ -8,7 +9,7 @@ var dbConnection = function () {
     async function dbConnect() {
         try {
             // connection string
-            const uri = 'mongodb+srv://willis444:CYtj392h2as7fcQk@cluster0.joxdx.mongodb.net/Project_Health?retryWrites=true&w=majority';
+            const uri = process.env.connection_string; // connect to the database using the credentials from the env file
             let db = await MongoClient.connect(uri);
             db = db.db('Project_Health');
             return db
