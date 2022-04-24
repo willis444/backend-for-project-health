@@ -1,10 +1,11 @@
 // uncomment this to export the app
-//const serverless = require('serverless-http');
+const serverless = require('serverless-http');
 var express = require('express');
 var bodyParser = require('body-parser');
 var multer = require('multer');
 var upload = multer();
 var app = express();
+const db = require('./src/db');
 
 // for parsing application/json
 app.use(bodyParser.json()); 
@@ -18,6 +19,9 @@ app.use(express.static('public'));
 
 require("./src/routes.js")(app); // get the routes from routes.js
 
-//uncomment this to export the app
+db.initDB();
+
 //module.exports.handler = serverless(app);
+
+//uncomment this to export the app
 app.listen(3000);

@@ -1,13 +1,15 @@
+org: willis444
+app: project-health
 service: project-health
 provider:
   name: aws
   runtime: nodejs14.x
   stage: dev
   region: ap-southeast-1
-  memorySize: 128
+  memorySize: 1024
 functions:
   app:
-    handler: app/app.handler
+    handler: app.handler
     events: 
       - http: 
           path: /
