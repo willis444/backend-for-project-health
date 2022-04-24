@@ -21,7 +21,7 @@ require("./src/routes.js")(app); // get the routes from routes.js
 
 db.initDB();
 
-//module.exports.handler = serverless(app);
+//app.listen(3000);
 
 //uncomment this to export the app
-app.listen(3000);
+module.exports.handler = serverless(app);
