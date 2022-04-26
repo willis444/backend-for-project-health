@@ -1,7 +1,7 @@
 const mongoClient = require('mongodb').MongoClient;
 require('dotenv').config(); // import the env file
 
-const uri = process.env.connection_string;
+const uri = process.env.conString;
 
 let _db;
 

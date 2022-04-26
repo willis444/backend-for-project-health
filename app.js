@@ -1,4 +1,3 @@
-// uncomment this to export the app
 const serverless = require('serverless-http');
 var express = require('express');
 var bodyParser = require('body-parser');
@@ -21,6 +20,7 @@ require("./src/routes.js")(app); // get the routes from routes.js
 
 db.initDB();
 
+//uncomment this to run it locally
 //app.listen(3000);
 
 //uncomment this to export the app

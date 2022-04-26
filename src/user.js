@@ -1,9 +1,12 @@
 var express = require('express');
 var router = express.Router();
+require('dotenv').config(); // import the env file
 var dbConnection = require('./db');
+const authenticateToken = require('../middleware/auth');
 
-router.post('/test', async function(req, res){
-    res.send(req.body);
+router.get('/test', authenticateToken, async function(req, res){
+    console.log(req.user);
+    res.send("hello there");
  });
 
 module.exports = router;
