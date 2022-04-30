@@ -9,4 +9,8 @@ router.get('/test', authenticateToken, async function(req, res){
     res.send("hello there");
  });
 
+router.get('/test1', async function(req, res){
+res.send("hello there");
+});
+
 module.exports = router;

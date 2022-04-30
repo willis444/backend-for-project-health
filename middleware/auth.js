@@ -4,7 +4,6 @@ const key = process.env.key; //get private key from the env file
 
 function authenticateToken (req, res, next) {
   const authHeader = req.headers.authorization;
-  console.log('hello there');
 
   if (authHeader) {
       const token = authHeader.split(' ')[1];
