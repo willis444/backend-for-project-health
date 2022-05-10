@@ -6,13 +6,13 @@ function authenticateToken (req, res, next) {
   const authHeader = req.headers.authorization;
 
   if (authHeader) {
-      const token = authHeader.split(' ')[1];
+      const token = authHeader.split(' ')[1]; // split the token from the incoming request
 
-      jwt.verify(token, key, (err, user) => {
-          if (err) {
+      jwt.verify(token, key, (err, user) => { // verify the token using jwt
+          if (err) { //return error if the token is not correct
+              console.log(err);
               return res.sendStatus(403);
           }
-
           req.user = user;
           next();
       });

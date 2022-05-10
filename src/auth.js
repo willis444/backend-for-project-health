@@ -51,6 +51,13 @@ router.post('/register', async function(req, res){
                         var data = { // define the databody
                             "user_id": req.body.user_id,
                             "user_password": hash,
+                            "user_role": "user",
+                            "user_eating_habits": {
+                                "isPork": false,
+                                "isBeef": false,
+                                "isVegetarian": false,
+                                "isSeafood": false
+                            }
                         }
                         await db.collection('user').insertOne(data); //insert the data into the database
                         return res.status(200).send('Register Successful');
