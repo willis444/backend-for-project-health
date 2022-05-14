@@ -16,12 +16,12 @@ res.send("hello there");
 router.get('/getProfile', authenticateToken, async function(req, res){
     client = await dbConnection.getDb(); //get connection instance
     db = client.db('Project_Health'); //point to spicific db
-    result = await db.collection("user").findOne({'user_id': req.user.id}, function(err, result) { //find the data from the database using the id in the jwt token
+    result = await db.collection("user").findOne({'_id': req.user.id}, function(err, result) { //find the data from the database using the id in the jwt token
         if (err) {
             return res.status(500).send(err.message);
         } else {
             var data = { // define the databody
-                "user_id": result.user_id,
+                "_id": result._id,
                 "user_role": result.user_role,
                 "user_eating_habits": {
                     "isPork": result.user_eating_habits.isPork,
@@ -47,7 +47,7 @@ router.post('/updateProfile', authenticateToken, async function(req, res){
                 }
         client = await dbConnection.getDb(); //get connection instance
         db = client.db('Project_Health'); //point to spicific db
-        result = await db.collection("user").updateOne({'user_id': req.user.id}, {$set:{user_eating_habits}}, function(err, result) { //find the data from the database using the id in the jwt token
+        result = await db.collection("user").updateOne({'_id': req.user.id}, {$set:{user_eating_habits}}, function(err, result) { //find the data from the database using the id in the jwt token
             if (err) {
                 return res.status(500).send(err.message);
             } else {
