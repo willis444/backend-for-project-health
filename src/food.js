@@ -37,7 +37,7 @@ router.get('/findFood', async function(req, res){ // special function to handle 
     }
 );
 
-router.get('/findFood/:query', async function(req, res){ // special function to handle search request from the front end
+router.get('/findFood/:query/:language', async function(req, res){ // special function to handle search request from the front end
     if (req.params.query == "") {
         return res.status(200).send(null);
     } else {
@@ -49,18 +49,47 @@ router.get('/findFood/:query', async function(req, res){ // special function to 
         const result = await db.collection("food").aggregate([
             {$match: {$text: { $search: req.params.query }}}, // match state: find the revelant result using the food name
             {$limit: 5}, //set limit of the result to 5 only
-            {$project: {"_id":0, "food_name":1}}, // use projection to only return food name from the database
+            {$project: {"_id":1, "food_name":1, "food_alt_name": 1}}, // use projection to only return food name from the database
             {$sort: { score: {$meta: "textScore"} }} // sort the result based on the search similar index
         ])
         const data = []; // declare an array "data"
-        await result.forEach(result =>  // loop the result array and push the result into the "data" array
-            {const obj = {"title": result.food_name}; // declare an object and assign the current foodname into it.
+        if (req.params.language == "ms") { // if the language code is ms, return alternate name
+            await result.forEach(result =>  // loop the result array and push the result into the "data" array
+            {const obj = {"_id":result._id, "title": result.food_alt_name}; // declare an object and assign the search result to it
             data.push(obj)} // push the object into the data array
             );
+        } else { // else, default to return english name
+            await result.forEach(result =>  // loop the result array and push the result into the "data" array
+            {const obj = {"_id":result._id, "title": result.food_name}; // declare an object and assign the search result to it
+            data.push(obj)} // push the object into the data array
+            );
+        }
         return res.status(200).send(data);
         } catch (error) {
             console.log(error);
         }
+    }
+});
+
+ router.post('/LogFood', authenticateToken, async function(req, res){
+    if (!req.body.datetime || !req.body.meal_type ||!req.body.food_id || !req.body.serving_size) {
+        return res.status(422).send('Missing parameters.'); //send error message for missing parameters
+    }
+    client = await dbConnection.getDb(); //get connection instance
+    db = client.db('Project_Health'); //point to spicific db
+    // define data structure
+    const data = {
+        "user_id": req.user.id, // get user id from jwt token
+        "log_datetime": req.body.datetime,
+        "log_meal_type": req.body.meal_type,
+        "log_food_id": req.body.food_id,
+        "log_serving_size": req.body.serving_size,
+    }
+    try {
+    const result = await db.collection("log").insertOne(data); // insert data into the db
+    return res.status(200).send(result);
+    } catch (error) {
+        console.log(error);
     }
 });
 

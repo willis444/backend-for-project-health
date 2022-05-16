@@ -49,7 +49,7 @@ router.post('/register', async function(req, res){
                 bcrypt.genSalt(saltRounds, function(err, salt) {
                     bcrypt.hash(req.body.user_password, salt, async function(err, hash) {
                         var data = { // define the databody
-                            "_id": req.body.user_id,
+                            "_id": req.body.user.id, // get user id from jwt token
                             "user_password": hash,
                             "user_role": "user",
                             "user_eating_habits": {
