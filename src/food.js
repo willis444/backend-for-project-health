@@ -73,11 +73,17 @@ router.get('/findFood/:query/:language', async function(req, res){ // special fu
 
  router.post('/LogFood', authenticateToken, async function(req, res){
     var food = [];
+    var serving_size = [];
     if (!req.body.datetime || !req.body.meal_type ||!req.body.food_id || !req.body.serving_size) {
         return res.status(422).send('Missing parameters.'); //send error message for missing parameters
     }
     var ObjectId = require('mongodb').ObjectId; // function to convert string into object id
-    req.body.food_id.forEach(element => food.push(new ObjectId(element))); // loop the food id variable and convert the id from stiring into object id
+    req.body.food_id.forEach((element) => 
+    food.push(new ObjectId(element)), // loop the food id variable and convert the id from stiring into object id
+    );
+    req.body.serving_size.forEach((element, index) => {
+        serving_size.push({food_id: new ObjectId(req.body.food_id[index]), size: element}) // loop the serving size array and add object id associated with it
+    });
     client = await dbConnection.getDb(); //get connection instance
     db = client.db('Project_Health'); //point to spicific db
     // define data structure
@@ -87,7 +93,7 @@ router.get('/findFood/:query/:language', async function(req, res){ // special fu
         "log_datetime": date,
         "log_meal_type": req.body.meal_type,
         "log_food_id": food,
-        "log_serving_size": req.body.serving_size,
+        "log_serving_size": serving_size,
     }
     try {
     const result = await db.collection("log").insertOne(data); // insert data into the log collection
@@ -113,7 +119,8 @@ router.get('/retrieveLogByDay/:startdate/:endate', authenticateToken, async func
                         {log_datetime: {$gte: startdate}}, // specify start date
                         {log_datetime: {$lt: endate}} // specify end date
                     ]
-                }},
+                }
+            },
             {
                 $lookup: { // lookup operator to perform left join
                     from: "food", // destination collection
@@ -121,7 +128,10 @@ router.get('/retrieveLogByDay/:startdate/:endate', authenticateToken, async func
                     foreignField: "_id", // foreign field in the destination collection
                     as: "food_details" // create a new array to hold the data
                 }
-            }
+            },
+            {
+                $sort: {"food_details": 1}
+            },
         ])
         await result.forEach(element => data.push(element));
         return res.status(200).send(data); // return the array to the user
