@@ -52,6 +52,7 @@ router.post('/register', async function(req, res){
                             "_id": req.body.user.id, // get user id from jwt token
                             "user_password": hash,
                             "user_role": "user",
+                            "user_gender": "male",
                             "user_eating_habits": {
                                 "isPork": false,
                                 "isBeef": false,

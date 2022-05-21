@@ -23,6 +23,7 @@ router.get('/getProfile', authenticateToken, async function(req, res){
             var data = { // define the databody
                 "_id": result._id,
                 "user_role": result.user_role,
+                "user_gender": result.user_gender,
                 "user_eating_habits": {
                     "isPork": result.user_eating_habits.isPork,
                     "isBeef": result.user_eating_habits.isBeef,
@@ -36,18 +37,20 @@ router.get('/getProfile', authenticateToken, async function(req, res){
 });
 
 router.post('/updateProfile', authenticateToken, async function(req, res){
-    if (!req.body.isPork || !req.body.isBeef || !req.body.isVegetarian || !req.body.isSeafood) {
+    if (!req.body.eating_habits.isPork || !req.body.eating_habits.isBeef || 
+        !req.body.eating_habits.isVegetarian || !req.body.eating_habits.isSeafood || !req.body.user_gender) {
         return res.status(422).send("Missing Parameters, please check the parameters you send");
     } else {
+        user_gender = req.body.user_gender;
         user_eating_habits = { // ternary operator is used as urlencoded only returns string
-                "isPork": req.body.isPork=="true"?true:false,
-                "isBeef": req.body.isBeef=="true"?true:false,
-                "isVegetarian": req.body.isVegetarian=="true"?true:false,
-                "isSeafood": req.body.isSeafood=="true"?true:false,
+                "isPork": req.body.eating_habits.isPork=="true"?true:false,
+                "isBeef": req.body.eating_habits.isBeef=="true"?true:false,
+                "isVegetarian": req.body.eating_habits.isVegetarian=="true"?true:false,
+                "isSeafood": req.body.eating_habits.isSeafood=="true"?true:false,
                 }
         client = await dbConnection.getDb(); //get connection instance
         db = client.db('Project_Health'); //point to spicific db
-        result = await db.collection("user").updateOne({'_id': req.user.id}, {$set:{user_eating_habits}}, function(err, result) { //find the data from the database using the id in the jwt token
+        result = await db.collection("user").updateOne({'_id': req.user.id}, {$set:{user_gender, user_eating_habits}}, function(err, result) { //find the data from the database using the id in the jwt token
             if (err) {
                 return res.status(500).send(err.message);
             } else {
