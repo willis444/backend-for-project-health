@@ -53,6 +53,7 @@ router.post('/register', async function(req, res){
                             "user_password": hash,
                             "user_role": "user",
                             "user_gender": "male",
+                            "user_language": "en",
                             "user_eating_habits": {
                                 "isPork": false,
                                 "isBeef": false,

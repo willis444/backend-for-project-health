@@ -141,4 +141,17 @@ router.get('/retrieveLogByDay/:startdate/:endate', authenticateToken, async func
     }
 })
 
+// used for testing index
+// db.log.aggregate([ 
+//         {
+//             $match: { 
+//                 '$and': [ 
+//                     {user_id: 'test'}, 
+//                     {log_datetime: {$gte: '2022-04-01T00:00:00.000Z'}}, 
+//                     {log_datetime: {$lt: '2022-05-01T00:00:00.000Z'}} 
+//                 ]
+//             }
+//         },
+//     ])
+
 module.exports = router;

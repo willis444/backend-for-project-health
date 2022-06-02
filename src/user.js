@@ -24,6 +24,7 @@ router.get('/getProfile', authenticateToken, async function(req, res){
                 "_id": result._id,
                 "user_role": result.user_role,
                 "user_gender": result.user_gender,
+                "user_language": result.user_language,
                 "user_eating_habits": {
                     "isPork": result.user_eating_habits.isPork,
                     "isBeef": result.user_eating_habits.isBeef,
@@ -51,6 +52,23 @@ router.post('/updateProfile', authenticateToken, async function(req, res){
         client = await dbConnection.getDb(); //get connection instance
         db = client.db('Project_Health'); //point to spicific db
         result = await db.collection("user").updateOne({'_id': req.user.id}, {$set:{user_gender, user_eating_habits}}, function(err, result) { //find the data from the database using the id in the jwt token
+            if (err) {
+                return res.status(500).send(err.message);
+            } else {
+                return res.status(200).send(result); // return data to the api
+            }
+        });
+    }
+});
+
+router.post('/updateLanguage', authenticateToken, async function(req, res){
+    if (!req.body.user_language) {
+        return res.status(422).send("Missing Parameters, please check the parameters you send");
+    } else {
+        user_language = req.body.user_language;
+        client = await dbConnection.getDb(); //get connection instance
+        db = client.db('Project_Health'); //point to spicific db
+        result = await db.collection("user").updateOne({'_id': req.user.id}, {$set:{user_language}}, function(err, result) { //find the data from the database using the id in the jwt token, then replace it
             if (err) {
                 return res.status(500).send(err.message);
             } else {
