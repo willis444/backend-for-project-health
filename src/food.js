@@ -79,7 +79,7 @@ router.get('/findFood/:query/:language', async function(req, res){ // special fu
     }
     var ObjectId = require('mongodb').ObjectId; // function to convert string into object id
     req.body.food_id.forEach((element) => 
-    food.push(new ObjectId(element)), // loop the food id variable and convert the id from stiring into object id
+    food.push(new ObjectId(element)), // loop the food id variable and convert the id from string into object id
     );
     req.body.serving_size.forEach((element, index) => {
         serving_size.push({food_id: new ObjectId(req.body.food_id[index]), size: element}) // loop the serving size array and add object id associated with it
@@ -140,6 +140,42 @@ router.get('/retrieveLogByDay/:startdate/:endate', authenticateToken, async func
         return res.status(500).send("server error");
     }
 })
+
+router.post('/addNewFood', async function(req, res){
+    if (!req.body.food_name || !req.body.food_alt_name) {
+        return res.status(422).send('Missing parameters. Please check the parameters you send'); //send error message for missing parameters
+    }
+    client = await dbConnection.getDb(); //get connection instance
+    db = client.db('Project_Health'); //point to spicific db
+    var Double = require("mongodb").Double; // get mongodb double operator
+    // define data structure
+    const data = {
+        "food_name": req.body.food_name, // get user id from jwt token
+        "food_alt_name": req.body.food_alt_name,
+        "food_nutrition_info": {
+            "macronutrition": {
+                calories: isNaN(Number(req.body.calories))==true?Double(0):Double(req.body.calories),
+                carbohydrates: isNaN(Number(req.body.carbohydrates))==true?Double(0):Double(req.body.carbohydrates),
+                fat: isNaN(Number(req.body.fat))==true?Double(0):Double(req.body.fat),
+                protein: isNaN(Number(req.body.protein))==true?Double(0):Double(req.body.protein),
+            },
+            "micronutrition": {
+                sodium: isNaN(Number(req.body.sodium))==true?Double(0):Double(req.body.sodium),
+                potassium: isNaN(Number(req.body.potassium))==true?Double(0):Double(req.body.potassium),
+                vitaminA: isNaN(Number(req.body.vitaminA))==true?Double(0):Double(req.body.vitaminA),
+                vitaminC: isNaN(Number(req.body.vitaminC))==true?Double(0):Double(req.body.vitaminC),
+                calcium: isNaN(Number(req.body.calcium))==true?Double(0):Double(req.body.calcium),
+                iron: isNaN(Number(req.body.iron))==true?Double(0):Double(req.body.iron),
+            }
+        },
+    }
+    try {
+    const result = await db.collection("food").insertOne(data); // insert data into the log collection
+    return res.status(200).send(result);
+    } catch (error) {
+        console.log(error);
+    }
+});
 
 // used for testing index
 // db.log.aggregate([ 
