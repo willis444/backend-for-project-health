@@ -152,14 +152,15 @@ router.post('/addNewFood', async function(req, res){
     const data = {
         "food_name": req.body.food_name, // get user id from jwt token
         "food_alt_name": req.body.food_alt_name,
+        "food_desc": req.body.food_desc,
         "food_nutrition_info": {
-            "macronutrition": {
+            "macronutrient": {
                 calories: isNaN(Number(req.body.calories))==true?Double(0):Double(req.body.calories),
                 carbohydrates: isNaN(Number(req.body.carbohydrates))==true?Double(0):Double(req.body.carbohydrates),
                 fat: isNaN(Number(req.body.fat))==true?Double(0):Double(req.body.fat),
                 protein: isNaN(Number(req.body.protein))==true?Double(0):Double(req.body.protein),
             },
-            "micronutrition": {
+            "micronutrient": {
                 sodium: isNaN(Number(req.body.sodium))==true?Double(0):Double(req.body.sodium),
                 potassium: isNaN(Number(req.body.potassium))==true?Double(0):Double(req.body.potassium),
                 vitaminA: isNaN(Number(req.body.vitaminA))==true?Double(0):Double(req.body.vitaminA),
